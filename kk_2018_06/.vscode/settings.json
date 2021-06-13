@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.ypp": "cpp",
+        "array": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "vector": "cpp",
+        "string": "cpp",
+        "ostream": "cpp"
+    }
+}

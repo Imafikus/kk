@@ -1,0 +1,134 @@
+%{
+#include <iostream>
+#include <cstdlib>
+#include <map>
+#include "ast.hpp"
+#define YYDEBUG 1
+
+using namespace std;
+
+void yyerror(string s){
+  cerr<<s<<endl;
+  exit(EXIT_FAILURE);
+}
+
+int yylex();
+
+map<string,unsigned> tablica;
+
+%}
+
+%union{
+   unsigned u;
+   string *s;
+   ExprAST *e;
+   vector<ExprAST*> *v;
+}
+
+%token <u> num_token
+%token <s> id_token id_liste_token
+%token main_token print_token and_token or_token xor_token not_token shl_token shr_token set_token to_token
+%type <e> E Naredba Program
+%type <v> NizNaredbi
+
+%left or_token
+%left xor_token
+%left and_token
+%left shr_token
+%left shl_token
+%right not_token
+
+%%
+Program: main_token '(' ')' '{' NizNaredbi '}' {
+  $$ = new SeqExprAST(*$5);
+  delete $5;
+
+  $$->codegen();
+  delete $$;
+ }
+;
+NizNaredbi: NizNaredbi ';' Naredba {
+  $$ = $1;
+  $$->push_back($3);
+ }
+| Naredba {
+  $$ = new vector<ExprAST*>();
+  $$->push_back($1);
+ }
+;
+Naredba: print_token E {
+  $$ = new PrintExprAST($2);
+}
+|set_token id_token to_token E {
+  $$ = new SetExprAST($4, *$2);
+  delete $2;
+}
+;
+E: E and_token E {
+  $$ = new AndExprAST($1, $3);
+}
+|E or_token E {
+  $$ = new OrExprAST($1, $3);
+}
+|E xor_token E {
+  $$ = new XorExprAST($1, $3);
+}
+|not_token E {
+  $$ = new NotExprAST($2);
+}
+|E shl_token E {
+  $$ = new ShlExprAST($1, $3);
+}
+|E shr_token E {
+  $$ = new ShrExprAST($1, $3);
+}
+|num_token {
+  $$ = new NumberExprAST($1);
+}
+|'(' E ')' {
+  $$ = $2;
+}
+|id_token {
+  $$ = new VariableExprAST(*$1);
+  delete $1;
+}
+;
+%%
+
+extern Module* TheModule;
+extern LLVMContext TheContext;
+extern IRBuilder<> Builder;
+Value *Str = NULL;
+Value *Str1 = NULL;
+Function *PrintfFja;
+Function *MainFja;
+
+int main(){
+  //yydebug = 1;
+  InitializeModuleAndPassManager();
+
+  /* printf fja */
+  FunctionType *FT1 = FunctionType::get(IntegerType::getInt32Ty(TheContext), PointerType::get(Type::getInt8Ty(TheContext), 0), true);
+  PrintfFja = Function::Create(FT1, Function::ExternalLinkage, "printf", TheModule);
+
+  vector<Type*> v(0);
+  FunctionType* FT2 = FunctionType::get(Type::getInt32Ty(TheContext), v, false);
+  MainFja = Function::Create(FT2, Function::ExternalLinkage, "main", TheModule);
+  BasicBlock *BB = BasicBlock::Create(TheContext, "entry", MainFja);
+  Builder.SetInsertPoint(BB);
+
+  /* globalni stringovi potreban za ispis */
+  Str = Builder.CreateGlobalStringPtr("%d\n");
+  Str1 = Builder.CreateGlobalStringPtr("0x%x\n");
+
+  yyparse();
+
+  /* zavrsetak main fje */
+  Builder.CreateRet(ConstantInt::get(TheContext, APInt(32, 0)));
+  verifyFunction(*MainFja);
+  
+  TheModule->print(outs(), nullptr);
+  delete TheModule;
+  
+  return 0;
+}

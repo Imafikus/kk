@@ -1,0 +1,445 @@
+Terminals unused in grammar
+
+    id_liste_token
+
+
+Grammar
+
+    0 $accept: Program $end
+
+    1 Program: main_token '(' ')' '{' NizNaredbi '}'
+
+    2 NizNaredbi: NizNaredbi ';' Naredba
+    3           | Naredba
+
+    4 Naredba: print_token E
+    5        | set_token id_token to_token E
+
+    6 E: E and_token E
+    7  | E or_token E
+    8  | E xor_token E
+    9  | not_token E
+   10  | E shl_token E
+   11  | E shr_token E
+   12  | num_token
+   13  | '(' E ')'
+   14  | id_token
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 1 13
+    ')' (41) 1 13
+    ';' (59) 2
+    '{' (123) 1
+    '}' (125) 1
+    error (256)
+    num_token <u> (258) 12
+    id_token <s> (259) 5 14
+    id_liste_token <s> (260)
+    main_token (261) 1
+    print_token (262) 4
+    and_token (263) 6
+    or_token (264) 7
+    xor_token (265) 8
+    not_token (266) 9
+    shl_token (267) 10
+    shr_token (268) 11
+    set_token (269) 5
+    to_token (270) 5
+
+
+Nonterminals, with rules where they appear
+
+    $accept (21)
+        on left: 0
+    Program <e> (22)
+        on left: 1
+        on right: 0
+    NizNaredbi <v> (23)
+        on left: 2 3
+        on right: 1 2
+    Naredba <e> (24)
+        on left: 4 5
+        on right: 2 3
+    E <e> (25)
+        on left: 6 7 8 9 10 11 12 13 14
+        on right: 4 5 6 7 8 9 10 11 13
+
+
+State 0
+
+    0 $accept: . Program $end
+
+    main_token  shift, and go to state 1
+
+    Program  go to state 2
+
+
+State 1
+
+    1 Program: main_token . '(' ')' '{' NizNaredbi '}'
+
+    '('  shift, and go to state 3
+
+
+State 2
+
+    0 $accept: Program . $end
+
+    $end  shift, and go to state 4
+
+
+State 3
+
+    1 Program: main_token '(' . ')' '{' NizNaredbi '}'
+
+    ')'  shift, and go to state 5
+
+
+State 4
+
+    0 $accept: Program $end .
+
+    $default  accept
+
+
+State 5
+
+    1 Program: main_token '(' ')' . '{' NizNaredbi '}'
+
+    '{'  shift, and go to state 6
+
+
+State 6
+
+    1 Program: main_token '(' ')' '{' . NizNaredbi '}'
+
+    print_token  shift, and go to state 7
+    set_token    shift, and go to state 8
+
+    NizNaredbi  go to state 9
+    Naredba     go to state 10
+
+
+State 7
+
+    4 Naredba: print_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 15
+
+
+State 8
+
+    5 Naredba: set_token . id_token to_token E
+
+    id_token  shift, and go to state 16
+
+
+State 9
+
+    1 Program: main_token '(' ')' '{' NizNaredbi . '}'
+    2 NizNaredbi: NizNaredbi . ';' Naredba
+
+    '}'  shift, and go to state 17
+    ';'  shift, and go to state 18
+
+
+State 10
+
+    3 NizNaredbi: Naredba .
+
+    $default  reduce using rule 3 (NizNaredbi)
+
+
+State 11
+
+   12 E: num_token .
+
+    $default  reduce using rule 12 (E)
+
+
+State 12
+
+   14 E: id_token .
+
+    $default  reduce using rule 14 (E)
+
+
+State 13
+
+    9 E: not_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 19
+
+
+State 14
+
+   13 E: '(' . E ')'
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 20
+
+
+State 15
+
+    4 Naredba: print_token E .
+    6 E: E . and_token E
+    7  | E . or_token E
+    8  | E . xor_token E
+   10  | E . shl_token E
+   11  | E . shr_token E
+
+    and_token  shift, and go to state 21
+    or_token   shift, and go to state 22
+    xor_token  shift, and go to state 23
+    shl_token  shift, and go to state 24
+    shr_token  shift, and go to state 25
+
+    $default  reduce using rule 4 (Naredba)
+
+
+State 16
+
+    5 Naredba: set_token id_token . to_token E
+
+    to_token  shift, and go to state 26
+
+
+State 17
+
+    1 Program: main_token '(' ')' '{' NizNaredbi '}' .
+
+    $default  reduce using rule 1 (Program)
+
+
+State 18
+
+    2 NizNaredbi: NizNaredbi ';' . Naredba
+
+    print_token  shift, and go to state 7
+    set_token    shift, and go to state 8
+
+    Naredba  go to state 27
+
+
+State 19
+
+    6 E: E . and_token E
+    7  | E . or_token E
+    8  | E . xor_token E
+    9  | not_token E .
+   10  | E . shl_token E
+   11  | E . shr_token E
+
+    $default  reduce using rule 9 (E)
+
+
+State 20
+
+    6 E: E . and_token E
+    7  | E . or_token E
+    8  | E . xor_token E
+   10  | E . shl_token E
+   11  | E . shr_token E
+   13  | '(' E . ')'
+
+    and_token  shift, and go to state 21
+    or_token   shift, and go to state 22
+    xor_token  shift, and go to state 23
+    shl_token  shift, and go to state 24
+    shr_token  shift, and go to state 25
+    ')'        shift, and go to state 28
+
+
+State 21
+
+    6 E: E and_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 29
+
+
+State 22
+
+    7 E: E or_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 30
+
+
+State 23
+
+    8 E: E xor_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 31
+
+
+State 24
+
+   10 E: E shl_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 32
+
+
+State 25
+
+   11 E: E shr_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 33
+
+
+State 26
+
+    5 Naredba: set_token id_token to_token . E
+
+    num_token  shift, and go to state 11
+    id_token   shift, and go to state 12
+    not_token  shift, and go to state 13
+    '('        shift, and go to state 14
+
+    E  go to state 34
+
+
+State 27
+
+    2 NizNaredbi: NizNaredbi ';' Naredba .
+
+    $default  reduce using rule 2 (NizNaredbi)
+
+
+State 28
+
+   13 E: '(' E ')' .
+
+    $default  reduce using rule 13 (E)
+
+
+State 29
+
+    6 E: E . and_token E
+    6  | E and_token E .
+    7  | E . or_token E
+    8  | E . xor_token E
+   10  | E . shl_token E
+   11  | E . shr_token E
+
+    shl_token  shift, and go to state 24
+    shr_token  shift, and go to state 25
+
+    $default  reduce using rule 6 (E)
+
+
+State 30
+
+    6 E: E . and_token E
+    7  | E . or_token E
+    7  | E or_token E .
+    8  | E . xor_token E
+   10  | E . shl_token E
+   11  | E . shr_token E
+
+    and_token  shift, and go to state 21
+    xor_token  shift, and go to state 23
+    shl_token  shift, and go to state 24
+    shr_token  shift, and go to state 25
+
+    $default  reduce using rule 7 (E)
+
+
+State 31
+
+    6 E: E . and_token E
+    7  | E . or_token E
+    8  | E . xor_token E
+    8  | E xor_token E .
+   10  | E . shl_token E
+   11  | E . shr_token E
+
+    and_token  shift, and go to state 21
+    shl_token  shift, and go to state 24
+    shr_token  shift, and go to state 25
+
+    $default  reduce using rule 8 (E)
+
+
+State 32
+
+    6 E: E . and_token E
+    7  | E . or_token E
+    8  | E . xor_token E
+   10  | E . shl_token E
+   10  | E shl_token E .
+   11  | E . shr_token E
+
+    $default  reduce using rule 10 (E)
+
+
+State 33
+
+    6 E: E . and_token E
+    7  | E . or_token E
+    8  | E . xor_token E
+   10  | E . shl_token E
+   11  | E . shr_token E
+   11  | E shr_token E .
+
+    shl_token  shift, and go to state 24
+
+    $default  reduce using rule 11 (E)
+
+
+State 34
+
+    5 Naredba: set_token id_token to_token E .
+    6 E: E . and_token E
+    7  | E . or_token E
+    8  | E . xor_token E
+   10  | E . shl_token E
+   11  | E . shr_token E
+
+    and_token  shift, and go to state 21
+    or_token   shift, and go to state 22
+    xor_token  shift, and go to state 23
+    shl_token  shift, and go to state 24
+    shr_token  shift, and go to state 25
+
+    $default  reduce using rule 5 (Naredba)

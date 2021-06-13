@@ -1,0 +1,97 @@
+%{
+#include <iostream>
+#include <cstdlib>
+#include <map>
+#define YYDEBUG 1
+
+using namespace std;
+
+void yyerror(string s){
+  cerr<<s<<endl;
+  exit(EXIT_FAILURE);
+}
+
+int yylex();
+
+map<string,unsigned> tablica;
+
+%}
+
+%union{
+   unsigned u;
+   string *s;
+}
+
+%token <u> num_token
+%token <s> id_token id_liste_token
+%token main_token print_token and_token or_token xor_token not_token shl_token shr_token set_token to_token
+%type <u> E
+
+%left or_token
+%left xor_token
+%left and_token
+%left shr_token
+%left shl_token
+%right not_token
+
+%%
+Program: main_token '(' ')' '{' NizNaredbi '}'
+;
+NizNaredbi: NizNaredbi ';' Naredba
+| Naredba
+;
+Naredba: print_token E {
+   if( tablica["flag"] != 0 ){
+     printf("0x%x\n",$2);
+   }
+   else
+     cout << $2 << endl;
+}
+|set_token id_token to_token E {
+   tablica[*$2] = $4;
+   delete $2;
+   if( tablica["flag"] != 0 ){
+     printf("0x%x\n",$4);
+   }
+   else
+     cout << $4 << endl;
+}
+;
+E: E and_token E {
+   $$ = $1 & $3;
+}
+|E or_token E {
+    $$ = $1 | $3;
+}
+|E xor_token E {
+    $$ = $1 ^ $3;
+}
+|not_token E {
+    $$ = ~$2;
+}
+|E shl_token E {
+   $$ = $1 << $3;
+}
+|E shr_token E {
+   $$ = $1 >> $3;
+}
+|num_token {
+   $$ = $1;
+}
+|'(' E ')' {
+   $$ = $2;
+}
+|id_token {
+   map<string,unsigned>::iterator tmp = tablica.find(*$1);
+   if(tmp==tablica.end())
+     yyerror("Nepoznata promenljiva");
+   $$ = tmp->second;
+   delete $1;
+}
+;
+%%
+int main(){
+  //yydebug = 1;
+  yyparse();
+  return 0;
+}

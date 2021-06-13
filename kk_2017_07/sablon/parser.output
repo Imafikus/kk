@@ -1,0 +1,444 @@
+Grammar
+
+    0 $accept: Program $end
+
+    1 Program: Lines
+
+    2 Lines: Lines Line
+    3      | Line
+
+    4 Line: vector_token Niz_vektora ';'
+    5     | print_token IzrazSaVektorima ';'
+    6     | id_vektora_token '=' IzrazSaVektorima ';'
+
+    7 Niz_vektora: Niz_vektora ',' id_vektora_token Inic_vektora
+    8            | id_vektora_token Inic_vektora
+
+    9 Inic_vektora: '=' IzrazSaVektorima
+   10             | %empty
+
+   11 IzrazSaVektorima: IzrazSaVektorima '+' IzrazSaVektorima
+   12                 | IzrazSaVektorima '-' IzrazSaVektorima
+   13                 | num_token '*' IzrazSaVektorima
+   14                 | '(' IzrazSaVektorima ')'
+   15                 | Vektor
+   16                 | id_vektora_token
+
+   17 Vektor: '[' num_token ',' num_token ']'
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 14
+    ')' (41) 14
+    '*' (42) 13
+    '+' (43) 11
+    ',' (44) 7 17
+    '-' (45) 12
+    ';' (59) 4 5 6
+    '=' (61) 6 9
+    '[' (91) 17
+    ']' (93) 17
+    error (256)
+    vector_token (258) 4
+    print_token (259) 5
+    id_vektora_token <s_attr> (260) 6 7 8 16
+    num_token <num_attr> (261) 13 17
+
+
+Nonterminals, with rules where they appear
+
+    $accept (17)
+        on left: 0
+    Program <syntree_attr> (18)
+        on left: 1
+        on right: 0
+    Lines <vec2_attr> (19)
+        on left: 2 3
+        on right: 1 2
+    Line <syntree_attr> (20)
+        on left: 4 5 6
+        on right: 2 3
+    Niz_vektora <vec1_attr> (21)
+        on left: 7 8
+        on right: 4 7
+    Inic_vektora <syntree_attr> (22)
+        on left: 9 10
+        on right: 7 8
+    IzrazSaVektorima <syntree_attr> (23)
+        on left: 11 12 13 14 15 16
+        on right: 5 6 9 11 12 13 14
+    Vektor <syntree_attr> (24)
+        on left: 17
+        on right: 15
+
+
+State 0
+
+    0 $accept: . Program $end
+
+    vector_token      shift, and go to state 1
+    print_token       shift, and go to state 2
+    id_vektora_token  shift, and go to state 3
+
+    Program  go to state 4
+    Lines    go to state 5
+    Line     go to state 6
+
+
+State 1
+
+    4 Line: vector_token . Niz_vektora ';'
+
+    id_vektora_token  shift, and go to state 7
+
+    Niz_vektora  go to state 8
+
+
+State 2
+
+    5 Line: print_token . IzrazSaVektorima ';'
+
+    id_vektora_token  shift, and go to state 9
+    num_token         shift, and go to state 10
+    '('               shift, and go to state 11
+    '['               shift, and go to state 12
+
+    IzrazSaVektorima  go to state 13
+    Vektor            go to state 14
+
+
+State 3
+
+    6 Line: id_vektora_token . '=' IzrazSaVektorima ';'
+
+    '='  shift, and go to state 15
+
+
+State 4
+
+    0 $accept: Program . $end
+
+    $end  shift, and go to state 16
+
+
+State 5
+
+    1 Program: Lines .
+    2 Lines: Lines . Line
+
+    vector_token      shift, and go to state 1
+    print_token       shift, and go to state 2
+    id_vektora_token  shift, and go to state 3
+
+    $default  reduce using rule 1 (Program)
+
+    Line  go to state 17
+
+
+State 6
+
+    3 Lines: Line .
+
+    $default  reduce using rule 3 (Lines)
+
+
+State 7
+
+    8 Niz_vektora: id_vektora_token . Inic_vektora
+
+    '='  shift, and go to state 18
+
+    $default  reduce using rule 10 (Inic_vektora)
+
+    Inic_vektora  go to state 19
+
+
+State 8
+
+    4 Line: vector_token Niz_vektora . ';'
+    7 Niz_vektora: Niz_vektora . ',' id_vektora_token Inic_vektora
+
+    ';'  shift, and go to state 20
+    ','  shift, and go to state 21
+
+
+State 9
+
+   16 IzrazSaVektorima: id_vektora_token .
+
+    $default  reduce using rule 16 (IzrazSaVektorima)
+
+
+State 10
+
+   13 IzrazSaVektorima: num_token . '*' IzrazSaVektorima
+
+    '*'  shift, and go to state 22
+
+
+State 11
+
+   14 IzrazSaVektorima: '(' . IzrazSaVektorima ')'
+
+    id_vektora_token  shift, and go to state 9
+    num_token         shift, and go to state 10
+    '('               shift, and go to state 11
+    '['               shift, and go to state 12
+
+    IzrazSaVektorima  go to state 23
+    Vektor            go to state 14
+
+
+State 12
+
+   17 Vektor: '[' . num_token ',' num_token ']'
+
+    num_token  shift, and go to state 24
+
+
+State 13
+
+    5 Line: print_token IzrazSaVektorima . ';'
+   11 IzrazSaVektorima: IzrazSaVektorima . '+' IzrazSaVektorima
+   12                 | IzrazSaVektorima . '-' IzrazSaVektorima
+
+    '+'  shift, and go to state 25
+    '-'  shift, and go to state 26
+    ';'  shift, and go to state 27
+
+
+State 14
+
+   15 IzrazSaVektorima: Vektor .
+
+    $default  reduce using rule 15 (IzrazSaVektorima)
+
+
+State 15
+
+    6 Line: id_vektora_token '=' . IzrazSaVektorima ';'
+
+    id_vektora_token  shift, and go to state 9
+    num_token         shift, and go to state 10
+    '('               shift, and go to state 11
+    '['               shift, and go to state 12
+
+    IzrazSaVektorima  go to state 28
+    Vektor            go to state 14
+
+
+State 16
+
+    0 $accept: Program $end .
+
+    $default  accept
+
+
+State 17
+
+    2 Lines: Lines Line .
+
+    $default  reduce using rule 2 (Lines)
+
+
+State 18
+
+    9 Inic_vektora: '=' . IzrazSaVektorima
+
+    id_vektora_token  shift, and go to state 9
+    num_token         shift, and go to state 10
+    '('               shift, and go to state 11
+    '['               shift, and go to state 12
+
+    IzrazSaVektorima  go to state 29
+    Vektor            go to state 14
+
+
+State 19
+
+    8 Niz_vektora: id_vektora_token Inic_vektora .
+
+    $default  reduce using rule 8 (Niz_vektora)
+
+
+State 20
+
+    4 Line: vector_token Niz_vektora ';' .
+
+    $default  reduce using rule 4 (Line)
+
+
+State 21
+
+    7 Niz_vektora: Niz_vektora ',' . id_vektora_token Inic_vektora
+
+    id_vektora_token  shift, and go to state 30
+
+
+State 22
+
+   13 IzrazSaVektorima: num_token '*' . IzrazSaVektorima
+
+    id_vektora_token  shift, and go to state 9
+    num_token         shift, and go to state 10
+    '('               shift, and go to state 11
+    '['               shift, and go to state 12
+
+    IzrazSaVektorima  go to state 31
+    Vektor            go to state 14
+
+
+State 23
+
+   11 IzrazSaVektorima: IzrazSaVektorima . '+' IzrazSaVektorima
+   12                 | IzrazSaVektorima . '-' IzrazSaVektorima
+   14                 | '(' IzrazSaVektorima . ')'
+
+    '+'  shift, and go to state 25
+    '-'  shift, and go to state 26
+    ')'  shift, and go to state 32
+
+
+State 24
+
+   17 Vektor: '[' num_token . ',' num_token ']'
+
+    ','  shift, and go to state 33
+
+
+State 25
+
+   11 IzrazSaVektorima: IzrazSaVektorima '+' . IzrazSaVektorima
+
+    id_vektora_token  shift, and go to state 9
+    num_token         shift, and go to state 10
+    '('               shift, and go to state 11
+    '['               shift, and go to state 12
+
+    IzrazSaVektorima  go to state 34
+    Vektor            go to state 14
+
+
+State 26
+
+   12 IzrazSaVektorima: IzrazSaVektorima '-' . IzrazSaVektorima
+
+    id_vektora_token  shift, and go to state 9
+    num_token         shift, and go to state 10
+    '('               shift, and go to state 11
+    '['               shift, and go to state 12
+
+    IzrazSaVektorima  go to state 35
+    Vektor            go to state 14
+
+
+State 27
+
+    5 Line: print_token IzrazSaVektorima ';' .
+
+    $default  reduce using rule 5 (Line)
+
+
+State 28
+
+    6 Line: id_vektora_token '=' IzrazSaVektorima . ';'
+   11 IzrazSaVektorima: IzrazSaVektorima . '+' IzrazSaVektorima
+   12                 | IzrazSaVektorima . '-' IzrazSaVektorima
+
+    '+'  shift, and go to state 25
+    '-'  shift, and go to state 26
+    ';'  shift, and go to state 36
+
+
+State 29
+
+    9 Inic_vektora: '=' IzrazSaVektorima .
+   11 IzrazSaVektorima: IzrazSaVektorima . '+' IzrazSaVektorima
+   12                 | IzrazSaVektorima . '-' IzrazSaVektorima
+
+    '+'  shift, and go to state 25
+    '-'  shift, and go to state 26
+
+    $default  reduce using rule 9 (Inic_vektora)
+
+
+State 30
+
+    7 Niz_vektora: Niz_vektora ',' id_vektora_token . Inic_vektora
+
+    '='  shift, and go to state 18
+
+    $default  reduce using rule 10 (Inic_vektora)
+
+    Inic_vektora  go to state 37
+
+
+State 31
+
+   11 IzrazSaVektorima: IzrazSaVektorima . '+' IzrazSaVektorima
+   12                 | IzrazSaVektorima . '-' IzrazSaVektorima
+   13                 | num_token '*' IzrazSaVektorima .
+
+    $default  reduce using rule 13 (IzrazSaVektorima)
+
+
+State 32
+
+   14 IzrazSaVektorima: '(' IzrazSaVektorima ')' .
+
+    $default  reduce using rule 14 (IzrazSaVektorima)
+
+
+State 33
+
+   17 Vektor: '[' num_token ',' . num_token ']'
+
+    num_token  shift, and go to state 38
+
+
+State 34
+
+   11 IzrazSaVektorima: IzrazSaVektorima . '+' IzrazSaVektorima
+   11                 | IzrazSaVektorima '+' IzrazSaVektorima .
+   12                 | IzrazSaVektorima . '-' IzrazSaVektorima
+
+    $default  reduce using rule 11 (IzrazSaVektorima)
+
+
+State 35
+
+   11 IzrazSaVektorima: IzrazSaVektorima . '+' IzrazSaVektorima
+   12                 | IzrazSaVektorima . '-' IzrazSaVektorima
+   12                 | IzrazSaVektorima '-' IzrazSaVektorima .
+
+    $default  reduce using rule 12 (IzrazSaVektorima)
+
+
+State 36
+
+    6 Line: id_vektora_token '=' IzrazSaVektorima ';' .
+
+    $default  reduce using rule 6 (Line)
+
+
+State 37
+
+    7 Niz_vektora: Niz_vektora ',' id_vektora_token Inic_vektora .
+
+    $default  reduce using rule 7 (Niz_vektora)
+
+
+State 38
+
+   17 Vektor: '[' num_token ',' num_token . ']'
+
+    ']'  shift, and go to state 39
+
+
+State 39
+
+   17 Vektor: '[' num_token ',' num_token ']' .
+
+    $default  reduce using rule 17 (Vektor)

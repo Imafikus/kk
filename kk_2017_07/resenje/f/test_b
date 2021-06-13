@@ -1,0 +1,4 @@
+vector v = [1,2]; 
+print v;
+print rotation(3.14)(v);
+print rotation(6.28)([0, 1] + [0, 1]);

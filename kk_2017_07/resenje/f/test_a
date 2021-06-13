@@ -1,0 +1,4 @@
+vector v = [1,2]; 
+print v;
+print scaling(3)(v);
+print scaling(6)([0, 1] + [0, 1]);

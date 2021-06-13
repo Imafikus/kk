@@ -1,0 +1,126 @@
+\documentclass[a4paper]{article}
+\setlength{\oddsidemargin}{-2cm} \setlength{\topmargin}{-35mm}
+\setlength{\textwidth}{20cm} \setlength{\textheight}{28cm}
+\pagestyle{empty}
+
+\def\DJ{\leavevmode\setbox0=\hbox{D}\kern0pt
+ \rlap{\kern.04em\raise.188\ht0\hbox{-}}D}
+\def\dj{\leavevmode\setbox0=\hbox{d}\kern0pt
+ \rlap{\kern.215em\raise.46\ht0\hbox{-}}d}
+\begin{document}
+
+\begin{center}
+\textbf{Konstrukcija kompilatora - Jun 2018.}\\
+\end{center}
+
+\begin{enumerate}
+
+\item Unaprediti ve\' c postoje\' ci interpreter koji podr\v zava cele
+  neozna\v cene brojeve u kompilator sa mogu\' cno\v s\' cu prevo\dj
+  enja na LLVM.
+
+\begin{enumerate}
+
+\item Interpreter ima mogu\' cnost \v stampanja i ra\v cunanja
+  vrednosti celobrojnih izraza. Nad brojevima su podr\v zani bitovski
+  operatori i ($and$), ili ($or$), ekskluzivno ili ($xor$), negacija
+  ($not$) i levo i desno siftovanje ($shl$ i $shr$), sa prioritetom i
+  asocijativno\v s\' cu kao u programskom jeziku C. Brojevi se zadaju
+  u dekadnom ili heksadekadnom sistemu.
+
+\begin{verbatim}
+main() {
+  # stampanje dekadno
+  print 4 or 1226 and 0xf;
+  print not 23 and 0xff;
+  print 16 shl 4 shr 1;
+  print 16 shl (4 shr 1)
+}
+\end{verbatim}
+
+\item Interpreter ima mogu\' cnost memorisanja vrednosti izraza u
+  promenljivu \v cije se ime sastoji samo od malih slova.
+\begin{verbatim}
+main() {
+  # dodela
+  set tmp to 127 shl 2;
+  print tmp or 1024 shl 1
+}
+\end{verbatim}
+
+\item Rezultat izraza je mogu\' ce ispisati i u heksadekasnom sistemu,
+  u zavisnosi od promenljive $flag$. Ako promenljiva nije definisana,
+  ili ako joj je vrednost 0, ispis je dekadni, ina\v ce je
+  heksadekadni.
+
+\begin{verbatim}
+main() {
+  # stampanje heksadekadno
+  set flag to not 0;
+  print tmp or 1024 shl 1
+}
+\end{verbatim}
+
+\end{enumerate}
+
+\end{enumerate}
+
+\vskip 1cm
+
+\begin{center}
+\textbf{Konstrukcija kompilatora - Jun 2018.}\\
+\end{center}
+
+\begin{enumerate}
+
+\item Unaprediti ve\' c postoje\' ci interpreter koji podr\v zava cele
+  neozna\v cene brojeve u kompilator sa mogu\' cno\v s\' cu prevo\dj
+  enja na LLVM.
+
+\begin{enumerate}
+
+\item Interpreter ima mogu\' cnost \v stampanja i ra\v cunanja
+  vrednosti celobrojnih izraza. Nad brojevima su podr\v zani bitovski
+  operatori i ($and$), ili ($or$), ekskluzivno ili ($xor$), negacija
+  ($not$) i levo i desno siftovanje ($shl$ i $shr$), sa prioritetom i
+  asocijativno\v s\' cu kao u programskom jeziku C. Brojevi se zadaju
+  u dekadnom ili heksadekadnom sistemu.
+
+\begin{verbatim}
+main() {
+  # stampanje dekadno
+  print 4 or 1226 and 0xf;
+  print not 23 and 0xff;
+  print 16 shl 4 shr 1;
+  print 16 shl (4 shr 1)
+}
+\end{verbatim}
+
+\item Interpreter ima mogu\' cnost memorisanja vrednosti izraza u
+  promenljivu \v cije se ime sastoji samo od malih slova.
+\begin{verbatim}
+main() {
+  # dodela
+  set tmp to 127 shl 2;
+  print tmp or 1024 shl 1
+}
+\end{verbatim}
+
+\item Rezultat izraza je mogu\' ce ispisati i u heksadekasnom sistemu,
+  u zavisnosi od promenljive $flag$. Ako promenljiva nije definisana,
+  ili ako joj je vrednost 0, ispis je dekadni, ina\v ce je
+  heksadekadni.
+
+\begin{verbatim}
+main() {
+  # stampanje heksadekadno
+  set flag to not 0;
+  print tmp or 1024 shl 1
+}
+\end{verbatim}
+
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}

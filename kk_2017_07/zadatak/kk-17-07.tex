@@ -1,0 +1,91 @@
+\documentclass[a4paper]{article}
+\setlength{\oddsidemargin}{-2cm} \setlength{\topmargin}{-3cm}
+\setlength{\textwidth}{20cm} \setlength{\textheight}{28cm}
+\pagestyle{empty}
+
+\def\DJ{\leavevmode\setbox0=\hbox{D}\kern0pt
+ \rlap{\kern.04em\raise.188\ht0\hbox{-}}D}
+\def\dj{\leavevmode\setbox0=\hbox{d}\kern0pt
+ \rlap{\kern.215em\raise.46\ht0\hbox{-}}d}
+\begin{document}
+
+\begin{center}
+\textbf{Konstrukcija kompilatora - Jul 2017.}\\
+prakti\v cni deo
+\end{center}
+
+\begin{enumerate}
+\item U prilo\v zenom direktorijumu nalazi se kompilator jezika za
+  opisivanje geometrijskih objekata u ravni, sa mogu\' cno\v s\' cu
+  prevo\dj enja na LLVM IR (\verb|--llvm|), objektni kod
+  (\verb|--compile|), ali i interpretacije (bez argumenata komandne
+  linije). Jezik je strogo tipiziran, tako da zahteva deklaraciju svih
+  promenljivih, pre njihove upotrebe. \verb"vector" predstavlja tip
+  podatka kojim se predstavljaju dvodimenzionali vektori u
+  ravni. Deklarisanje ovog tipa je mogu\' ce na slede\' ci na\v cin:
+\begin{verbatim}
+vector v = [1,3.14], v1 = [-2, 1], v2, v3;
+\end{verbatim}
+Jezik podr\v zava \v stampanje vektora i promenu vrednosti ve\' c
+deklarisanim promenljivama. Dozvoljene operacije nad vektorima su
+sabiranje, oduzimanje i mno\v zenje konstantom.
+\begin{verbatim}
+print v;                                        [1, 3.14]
+v2 = [0,1];
+print 3*v+v2;                                   [3, 10.42]
+v3 = v2 - [10,10];
+vector c = -2*[-0.5,-0.5];
+\end{verbatim}
+Unaprediti jezik dodavanjem jo\v s jednog tipa podataka:
+\verb"transformation" predstavlja transformacije vektora u
+ravni. Tipovi transformacija su homotetija sa zadatim koeficijentom,
+rotacija i kompozicija vi\v se transformacija. Omogu\' citi
+deklaraciju transformacija i njihovu primenu na vektore.  Imena
+promenljivih koje predstavljaju transformacije po\v cinju znakom \$,
+pa zatim malim slovom, koje eventualno prate neke cifre.
+
+
+U nastavku sledi predlo\v zen na\v cin realizacije zadatka. Prvo
+implementirati interpretaciju.
+\begin{enumerate}
+\item Homotetija
+\begin{verbatim}
+vector v = [1,2]; 
+print v;
+print scaling(3)(v);
+print scaling(6)([0, 1] + [0, 1]);
+\end{verbatim}
+\item Rotacija
+\begin{verbatim}
+vector v = [1,2]; 
+print v;
+print rotation(3.14)(v);
+print rotation(6.28)([0, 1] + [0, 1]);
+\end{verbatim}
+\item Deklaracija
+\begin{verbatim}
+vector v = [1,2]; 
+print v;
+transformation $f = rotation(3.14);
+transformation $g = scaling(3);
+print $f([0, 1]);
+print $f(v);
+print $g([0, 1]);
+print $g(v);
+\end{verbatim}
+\item Kompozicija
+\begin{verbatim}
+vector c = -2*[-0.5,-0.5];
+transformation $f = rotation(3.14);
+transformation $g = scaling(2);
+transformation $y = scaling(-1) * $g * $f;
+print $y*scaling(3)(c);
+\end{verbatim}
+\end{enumerate}
+
+A zatim i kompilaciju istim redosledom, vode\' ci se istim test
+primerima u delovima (e), (f), (g) i (h).
+
+\end{enumerate}
+
+\end{document}

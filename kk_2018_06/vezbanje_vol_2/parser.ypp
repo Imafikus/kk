@@ -1,0 +1,166 @@
+%{
+#include <iostream>
+#include <cstdlib>
+#include <map>
+#include "ast.hpp"
+
+#define YYDEBUG 1
+
+using namespace std;
+
+void yyerror(string s){
+  cerr<<s<<endl;
+  exit(EXIT_FAILURE);
+}
+
+int yylex();
+
+map<string,unsigned> tablica;
+
+%}
+
+%union{
+   ExprAST *e;
+   vector<ExprAST *> *v;
+   vector<string> *v1;
+   unsigned u;
+   string *s;
+}
+
+%token <u> num_token
+%token <s> id_token id_liste_token
+%token call_token print_token and_token or_token xor_token not_token shl_token shr_token set_token to_token
+%type <e> E Naredba Program PozivFje Funkcija Blok
+%type <v> NizNaredbi NizE
+%type <v1> NizArgumenata Args
+
+%left or_token
+%left xor_token
+%left and_token
+%left shr_token
+%left shl_token
+%right not_token
+
+%%
+Program: Program Funkcija {
+   // for(int i = 0; i < $5->size(); i++) {
+   //    // cout << "Trenutna naredba " << i << endl;
+   //    (*$5)[i]->codegen();
+   // }
+} 
+| Funkcija {
+   
+};
+
+Funkcija: id_token '(' Args ')' Blok {
+   $$ = new FunctionExprAST(*$1, *$3, $5);
+   
+   $$->codegen();
+}
+;
+
+Args: NizArgumenata {
+  $$ = $1;
+ }
+| {
+  $$ = new vector<string>();
+ }
+;
+NizArgumenata: NizArgumenata ',' id_token {
+  $$ = $1;
+  $$->push_back(*$3);
+  delete $3;
+ }
+| id_token {
+  $$ = new vector<string>();
+  $$->push_back(*$1);
+  delete $1;
+  }
+;
+
+Blok: '{' NizNaredbi '}' {
+   $$ = new SeqExprAST(*$2);
+   delete $2;
+}
+;
+
+NizNaredbi: NizNaredbi ';' Naredba {
+   $$ = $1;
+   $$->push_back($3);
+}
+| Naredba {
+   $$ = new vector<ExprAST*>();
+   $$->push_back($1);
+}
+;
+Naredba: print_token E {
+   $$ = new PrintExprAST($2);
+}
+|set_token id_token to_token E {
+   $$ = new AssignExprAST(*$2, $4);
+   delete $2;
+}
+;
+E: E and_token E {
+   $$ = new AndExprAST($1, $3);
+}
+|E or_token E {
+   $$ = new OrExprAST($1, $3);
+}
+|E xor_token E {
+   $$ = new XorExprAST($1, $3);
+}
+|not_token E {
+   $$ = new NotExprAST($2);
+}
+|E shl_token E {
+   $$ = new ShlExprAST($1, $3);
+}
+|E shr_token E {
+   $$ = new ShrExprAST($1, $3);
+}
+|num_token {
+   $$ = new NumberExprAST($1);
+}
+|'(' E ')' {
+   $$ = $2;
+}
+|id_token {
+   $$ = new VariableExprAST(*$1);
+   delete $1;
+}
+| PozivFje
+;
+PozivFje: call_token id_token  '(' NizE ')' {
+   $$ = new CallExprAST(*$2, *$4);
+   delete $2;
+   delete $4;
+}
+| call_token id_token '(' ')' {
+  vector<ExprAST*> tmp;
+  $$ = new CallExprAST(*$2, tmp);
+  delete $2;
+ }
+;
+NizE: NizE ',' E {
+   $$ = $1;
+   $$->push_back($3);
+}
+| E {
+   $$ = new vector<ExprAST*>();
+   $$->push_back($1);
+}
+;
+%%
+int main(){
+   yydebug = 1;
+
+   initMain();
+   
+   
+   yyparse();  
+   
+   
+   endMain();
+   return 0;
+}
